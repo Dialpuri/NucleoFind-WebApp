@@ -27,6 +27,8 @@ public:
 
     void set_slice_data(int slice_id, const emscripten::val &floatArrayObject);
 
+    void set_slice_data_by_ptr(int slice_id, intptr_t data, size_t size);
+
     void save_maps();
 
 private:

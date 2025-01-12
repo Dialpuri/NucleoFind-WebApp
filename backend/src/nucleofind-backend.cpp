@@ -81,7 +81,6 @@ void NucleoFind::interpolate_grid() {
         }
     }
 
-    work_grid.normalize();
     gemmi::Ccp4<> work_map;
     work_map.grid = work_grid;
     work_map.update_ccp4_header();
@@ -171,7 +170,18 @@ std::vector<float> NucleoFind::get_slice(int slice_id) const {
     const std::vector<int> slice = slices[slice_id];
 
     std::vector<float> data(32*32*32, 0);
-    work_grid.get_subarray(data.data(), {slice[0], slice[1], slice[2]}, {32, 32, 32});
+    for (int i = 0; i < 32; i++) {
+        for (int j = 0; j < 32; j++) {
+            for (int k = 0; k < 32; k++) {
+                int index = i * (32 * 32) + j * (32) + k;
+                const int u = slice[0] + i;
+                const int v = slice[1] + j;
+                const int w = slice[2] + k;
+                float value = work_grid.get_value(u, v, w);
+                data[index] = value;
+            }
+        }
+    }
     return data;
 
 
@@ -195,24 +205,59 @@ void NucleoFind::set_slice_data(int slice_id, const emscripten::val &floatArrayO
     for (int i = 0; i < 32; i++) {
         for (int j = 0; j < 32; j++) {
             for (int k = 0; k < 32; k++) {
+                // int index = ((i * 32 + j) * 32 + k) * 4;
+                int index = i * (32 * 32 * 4) + j * (32 * 4) + k * 4;
+                const int u = slice[0] + i;
+                const int v = slice[1] + j;
+                const int w = slice[2] + k;
+                float channel0 = slice_data[index];
+                float channel1 = slice_data[index+1];
+                float channel2 = slice_data[index+2];
+                float channel3 = slice_data[index+3];
+
+                const float null_current_value = null_grid.get_value(u, v, w);
+                const float phosphate_current_value = phosphate_grid.get_value(u, v, w);
+                const float sugar_current_value = sugar_grid.get_value(u, v, w);
+                const float base_current_value = base_grid.get_value(u, v, w);
+                const float count_current_value = count_grid.get_value(u, v, w);
+
+                null_grid.set_value(u, v, w, null_current_value+channel0);
+                phosphate_grid.set_value(u, v, w, phosphate_current_value+channel1);
+                sugar_grid.set_value(u, v, w, sugar_current_value+channel2);
+                base_grid.set_value(u, v, w, base_current_value+channel3);
+                count_grid.set_value(u, v, w, count_current_value+1);
+            }
+        }
+    }
+}
+
+void NucleoFind::set_slice_data_by_ptr(int slice_id, intptr_t data, size_t size) {
+    float* data_ptr = reinterpret_cast<float*>(data);
+    std::vector<float> slice_data(data_ptr, data_ptr+size);
+
+    const std::vector<int> slice = slices[slice_id];
+    for (int i = 0; i < 32; i++) {
+        for (int j = 0; j < 32; j++) {
+            for (int k = 0; k < 32; k++) {
                 int index = ((i * 32 + j) * 32 + k) * 4;
                 const int u = slice[0] + i;
                 const int v = slice[1] + j;
                 const int w = slice[2] + k;
                 float channel0 = slice_data[index];
-                float channel1 = slice_data[++index];
-                float channel2 = slice_data[++index];
-                float channel3 = slice_data[++index];
+                float channel1 = slice_data[index+1];
+                float channel2 = slice_data[index+2];
+                float channel3 = slice_data[index+3];
 
                 const float null_current_value = null_grid.get_value(u, v, w);
-                null_grid.set_value(u, v, w, null_current_value+channel0);
                 const float phosphate_current_value = phosphate_grid.get_value(u, v, w);
-                phosphate_grid.set_value(u, v, w, phosphate_current_value+channel1);
                 const float sugar_current_value = sugar_grid.get_value(u, v, w);
-                sugar_grid.set_value(u, v, w, sugar_current_value+channel2);
                 const float base_current_value = base_grid.get_value(u, v, w);
-                base_grid.set_value(u, v, w, base_current_value+channel3);
                 const float count_current_value = count_grid.get_value(u, v, w);
+
+                null_grid.set_value(u, v, w, null_current_value+channel0);
+                phosphate_grid.set_value(u, v, w, phosphate_current_value+channel1);
+                sugar_grid.set_value(u, v, w, sugar_current_value+channel2);
+                base_grid.set_value(u, v, w, base_current_value+channel3);
                 count_grid.set_value(u, v, w, count_current_value+1);
             }
         }

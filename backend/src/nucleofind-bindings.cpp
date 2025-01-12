@@ -16,7 +16,8 @@ EMSCRIPTEN_BINDINGS(nucleofind_module)
         .constructor<>()
         .function("get_no_slices", &NucleoFind::get_no_slices)
         .function("get_slice", &NucleoFind::get_slice)
-        .function("set_slice_data", &NucleoFind::set_slice_data, allow_raw_pointers())
+        // .function("set_slice_data", &NucleoFind::set_slice_data, allow_raw_pointers())
+        .function("set_slice_data_by_ptr", &NucleoFind::set_slice_data_by_ptr, allow_raw_pointers())
         .function("save_maps", &NucleoFind::save_maps);
 }
 

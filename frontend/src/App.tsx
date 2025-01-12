@@ -90,9 +90,9 @@ function App() {
             const no_slices = nucleofind.get_no_slices();
 
             console.log(no_slices)
-            // save_map("/work.map");
+            save_map("/work.map");
             // save_map("/work-reinterpolated.map");
-            // save_map("/raw.map");
+            save_map("/raw.map");
 
             function save_array(array: Float32Array | Array, path: string) {
                 const dataString = array.join('\n'); // Each number on a new line
@@ -104,8 +104,7 @@ function App() {
                 URL.revokeObjectURL(link.href);
             }
 
-            for (let i = 0; i < no_slices; i++) {
-
+            async function predict(i: number) {
                 const slice = nucleofind.get_slice(i);
 
                 const data = new Array(32 * 32 * 32);
@@ -113,27 +112,41 @@ function App() {
                     data[i] = slice.get(i)
                 }
 
+                // save_array(data, "/input.txt");
                 let tensor = new ort.Tensor("float32", data, [32, 32, 32])
                 tensor = tensor.reshape([1, 32, 32, 32, 1])
                 const input = {x: tensor};
                 const output_name = "conv3d_22";
                 let output = await model.run(input)
                 output = output[output_name]
+                // save_array(output.data, "/output.txt")
                 output = output.reshape([32, 32, 32, 4])
 
-                nucleofind.set_slice_data(i, output.data)
-                const progress = Math.round(i / no_slices * 100);
-                console.log(progress, "%")
+                const size = output.data.length * output.data.BYTES_PER_ELEMENT; // Calculate byte size
+                const ptr = Module._malloc(size); // Allocate memory
+                const heap_array = new Float32Array(Module.HEAPF32.buffer, ptr, output.data.length);
+                heap_array.set(output.data);
+                nucleofind.set_slice_data_by_ptr(i, ptr, size)
+                Module._free(ptr);
 
+                const progress = Math.round(i / no_slices * 100);
+                return progress;
+            }
+
+            // await predict(0);
+            for (let i = 0; i < no_slices; i++) {
+                const progress = await predict(i);
+                console.log(progress, "%")
+                // break;
             }
 
             nucleofind.save_maps();
 
             setPhosphateMap(new Uint8Array(Module.FS.readFile("/phosphate.map")));
 
-            // save_map("/phosphate.map");
-            // save_map("/sugar.map");
-            // save_map("/base.map");
+            save_map("/phosphate.map");
+            save_map("/sugar.map");
+            save_map("/base.map");
             nucleofind.delete();
             setPredictedMapsSaved(true);
         }

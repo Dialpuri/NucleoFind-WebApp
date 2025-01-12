@@ -22,9 +22,9 @@ add_subdirectory(${WRK_DIR}/gemmi)
 add_library(nucleofind_lib ${WRK_DIR}/src/nucleofind-backend.cpp)
 add_executable(nucleofind_exec ${WRK_DIR}/src/nucleofind-bindings.cpp)
 
-target_link_options(nucleofind_exec PRIVATE -sEXIT_RUNTIME=1 -sASSERTIONS=2 -fexceptions -sALLOW_MEMORY_GROWTH=1 --bind
+target_link_options(nucleofind_exec PRIVATE -O2 -sEXIT_RUNTIME=1 -sASSERTIONS=2 -fexceptions -sALLOW_MEMORY_GROWTH=1 --bind
         -sFORCE_FILESYSTEM=1 -sMODULARIZE=1 -sEXPORT_NAME=nucleofind_module -sEXPORTED_RUNTIME_METHODS=['FS']
-        -sMODULARIZE=1 -sEXPORT_ES6=1
+        -sEXPORTED_FUNCTIONS=['_malloc','_free'] -sMODULARIZE=1 -sEXPORT_ES6=1
 )
 
 target_link_libraries(nucleofind_lib PRIVATE
