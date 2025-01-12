@@ -51,7 +51,7 @@ private:
     const float spacing = 0.7;
     const float box_size = 32;
     const int overlap = 16;
-    const bool compute_entire_cell = true;
+    const bool compute_entire_cell = false;
 
     gemmi::Mtz mtz;
     gemmi::Grid<> raw_grid;

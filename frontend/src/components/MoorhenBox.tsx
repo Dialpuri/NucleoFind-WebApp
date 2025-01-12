@@ -79,7 +79,7 @@ function MoorhenStateWrapper(props: MoorhenProps) {
         loadMap(props.baseMap, "base")
     }, [props.predictedMapsSaved]);
 
-    return <MoorhenContainer {...collectedProps} setMoorhenDimensions={moorhenDimensionCallback} viewOnly={false}/>
+    return <MoorhenContainer {...collectedProps} setMoorhenDimensions={moorhenDimensionCallback} viewOnly={true}/>
 }
 
 function MoorhenBox(props: MoorhenProps) {
