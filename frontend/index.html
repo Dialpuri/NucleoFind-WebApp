@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>NucleoFind Web App</title>
+    <script>
+        // See https://github.com/facebook/react/issues/20829#issuecomment-802088260
+        // FOR VITE FIX https://github.com/chaosprint/vite-plugin-cross-origin-isolation
+        if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;
+    </script>
 </head>
 <body>
 <div id="root"></div>
