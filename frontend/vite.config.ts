@@ -21,6 +21,8 @@ const wasmContentTypePlugin = {
 export default defineConfig({
   plugins: [
       react(),
+      topLevelAwait(),
+      crossOriginIsolation(),
       wasmContentTypePlugin,
       {
           name: "configure-response-headers",

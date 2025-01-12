@@ -8,13 +8,15 @@ interface MoorhenProps {
     fileContent: null | Uint8Array,
     predictedMapsSaved: boolean,
     phosphateMap: null | Uint8Array,
+    sugarMap: null | Uint8Array,
+    baseMap: null | Uint8Array,
 
 }
 
 function MoorhenStateWrapper(props: MoorhenProps) {
 
     const moorhenDimensionCallback = (): [number, number] => {
-        return [800, 600];
+        return [800, 500];
     };
     const glRef = useRef(null);
     const timeCapsuleRef = useRef(null);
@@ -59,22 +61,25 @@ function MoorhenStateWrapper(props: MoorhenProps) {
 
     useEffect(() => {
         if (!props.predictedMapsSaved) return;
-        const loadMap = async () => {
-            if (props.phosphateMap === null) return;
+        const loadMap = async (map: Uint8Array, name: string) => {
+            if (map === null) return;
             const newMap = new MoorhenMap(commandCentre, glRef);
             await newMap.loadToCootFromMapData(
-                props.phosphateMap,
-                'map-1',
+                map,
+                name,
                 false
             );
+            // newMap.setDefaultColour('red');
             dispatch(addMap(newMap));
 
 
         }
-        loadMap()
+        loadMap(props.phosphateMap, "phosphate")
+        loadMap(props.sugarMap, "sugar")
+        loadMap(props.baseMap, "base")
     }, [props.predictedMapsSaved]);
 
-    return <MoorhenContainer {...collectedProps} moorhenDimensionCallback={moorhenDimensionCallback} viewOnly={false}/>
+    return <MoorhenContainer {...collectedProps} setMoorhenDimensions={moorhenDimensionCallback} viewOnly={false}/>
 }
 
 function MoorhenBox(props: MoorhenProps) {

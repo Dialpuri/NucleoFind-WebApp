@@ -6,10 +6,10 @@ NucleoFind::NucleoFind() {
     calculate_interpolated_size();
     interpolate_grid();
     auto a = reinterpolate_grid(work_grid);
-    gemmi::Ccp4<> work_map;
-    work_map.grid = a;
-    work_map.update_ccp4_header();
-    work_map.write_ccp4_map("/work-reinterpolated.map");
+    // gemmi::Ccp4<> work_map;
+    // work_map.grid = a;
+    // work_map.update_ccp4_header();
+    // work_map.write_ccp4_map("/work-reinterpolated.map");
 
     calculate_slices();
     setup_output_grids();
@@ -110,23 +110,6 @@ gemmi::Grid<> NucleoFind::reinterpolate_grid(const gemmi::Grid<>& grid) {
     output_grid.set_unit_cell(raw_grid.unit_cell);
     output_grid.set_size_without_checking(raw_grid.nu, raw_grid.nv, raw_grid.nw);
 
-    std::cout << "Grid input - " << grid.nu << " " << grid.nv << " " << grid.nw << std::endl;
-    std::cout << "Grid output - " << output_grid.nu << " " << output_grid.nv << " " << output_grid.nw << std::endl;
-
-
-    // for (int i = 0; i < output_grid.nu; i++) {
-    //     for (int j = 0; j < output_grid.nv; j++) {
-    //         for (int k = 0; k < output_grid.nw; k++) {
-    //             gemmi::Position position = output_grid.get_position(i, j, k) - box.minimum;
-    //             float interpolated_value = grid.interpolate_value(position);
-    //             // std::cout << position.x << " " << position.y << " " << position.z << " " << grid.interpolate_value(position) << std::endl;
-    //             output_grid.set_value(i, j, k, interpolated_value );
-    //         }
-    //     }
-    // }
-    //
-    //
-    // //
     if (compute_entire_cell) {
         for (const auto& point: output_grid) {
             gemmi::Position position = output_grid.point_to_position(point) - box.minimum;

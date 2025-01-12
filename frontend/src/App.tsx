@@ -18,6 +18,9 @@ function App() {
     const [fileContent, setFileContent] = useState<null | Uint8Array>(null);
     const [predictedMapsSaved, setPredictedMapsSaved] = useState<boolean>(false);
     const [phosphateMap, setPhosphateMap] = useState<null | Uint8Array>(null);
+    const [sugarMap, setSugarMap] = useState<null | Uint8Array>(null);
+    const [baseMap, setBaseMap] = useState<null | Uint8Array>(null);
+    const [progress, setProgress] = useState<number>(0);
 
     useEffect(() => {
         nucleofind_module().then((module: Object) => {
@@ -90,9 +93,9 @@ function App() {
             const no_slices = nucleofind.get_no_slices();
 
             console.log(no_slices)
-            save_map("/work.map");
+            // save_map("/work.map");
             // save_map("/work-reinterpolated.map");
-            save_map("/raw.map");
+            // save_map("/raw.map");
 
             function save_array(array: Float32Array | Array, path: string) {
                 const dataString = array.join('\n'); // Each number on a new line
@@ -136,6 +139,7 @@ function App() {
             // await predict(0);
             for (let i = 0; i < no_slices; i++) {
                 const progress = await predict(i);
+                setProgress(progress);
                 console.log(progress, "%")
                 // break;
             }
@@ -143,10 +147,11 @@ function App() {
             nucleofind.save_maps();
 
             setPhosphateMap(new Uint8Array(Module.FS.readFile("/phosphate.map")));
-
-            save_map("/phosphate.map");
-            save_map("/sugar.map");
-            save_map("/base.map");
+            setSugarMap(new Uint8Array(Module.FS.readFile("/sugar.map")));
+            setBaseMap(new Uint8Array(Module.FS.readFile("/base.map")));
+            // save_map("/phosphate.map");
+            // save_map("/sugar.map");
+            // save_map("/base.map");
             nucleofind.delete();
             setPredictedMapsSaved(true);
         }
@@ -155,12 +160,15 @@ function App() {
 
 
     return (
-        <>
+        <div
+            className="flex flex-col min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 items-center justify-center space-y-4 pt-10">
             <UploadBox onSubmit={handleFileChange}/>
-            <div className="block" style={{width: "500px"}}>
-                <MoorhenBox fileContent={fileContent} predictedMapsSaved={predictedMapsSaved} phosphateMap={phosphateMap}/>
+            {progress > 0 ? <progress value={progress} className="styled-progress"/>: <></>}
+            <div className="flex mx-auto mt-10">
+                <MoorhenBox fileContent={fileContent} predictedMapsSaved={predictedMapsSaved}
+                            phosphateMap={phosphateMap} sugarMap={sugarMap} baseMap={baseMap}/>
             </div>
-        </>
+        </div>
 
     )
 }
