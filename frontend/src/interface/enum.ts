@@ -1,5 +1,5 @@
 export enum WorkerStatus {
-    NOTSTARTED,
-    RUNNING,
-    FINISHED
+  NOTSTARTED,
+  RUNNING,
+  FINISHED,
 }

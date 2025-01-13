@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc';
-// @ts-ignore
+// @ts-expect-error
 import crossOriginIsolation from 'vite-plugin-cross-origin-isolation';
-// import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import {viteStaticCopy} from "vite-plugin-static-copy";
 // import { viteStaticCopy } from 'vite-plugin-static-copy';
+// import wasm from 'vite-plugin-wasm';
 
 // https://vite.dev/config/
 
