@@ -7,13 +7,6 @@ import MoorhenBox from "./components/MoorhenBox.tsx";
 import {WorkerStatus} from "./interface/enum.ts"
 import {NucleoFindType, NucleoFindModuleType} from "./interface/types.ts"
 
-// import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/esm/ort.min.js";
-// ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
-// ort.env.wasm.numThreads = 1;
-
-// import * as ort from "onnxruntime-web";
-// ort.env.wasm.wasmPaths = ".";
-
 import Worker from "./workers/inferenceWorker?worker"
 
 function App() {
