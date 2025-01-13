@@ -148,6 +148,7 @@ function App() {
         };
 
         workerRef.current.onerror = (error) => {
+          console.error("Worker error:", error);
           reject(error);
         };
       });
