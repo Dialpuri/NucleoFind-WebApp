@@ -126,6 +126,8 @@ function App() {
   const preloadWorker = async () => {
     workerRef.current = new Worker();
 
+    await fetch("/nucleofind-nano-float32.onnx")
+
     const initialiseWorker = () => {
       return new Promise((resolve, reject) => {
         if (workerRef.current === null) {
