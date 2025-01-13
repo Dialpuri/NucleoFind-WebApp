@@ -86,7 +86,6 @@ function App() {
         }
 
         const no_slices = nucleofindRef.current.get_no_slices();
-        // const no_slices = 2;
         const sliceStatus = new Array(no_slices).fill(WorkerStatus.NOTSTARTED);
 
         for (let i = 0; i < no_slices; i++) {
@@ -126,7 +125,7 @@ function App() {
                 sliceStatus[data.slice] = WorkerStatus.FINISHED;
             }
 
-            if (checkCompletion(sliceStatus) === true) {
+            if (checkCompletion(sliceStatus)) {
                 nucleofindRef.current.save_maps();
                 setPhosphateMap(new Uint8Array(moduleRef.current.FS.readFile("/phosphate.map")));
                 setSugarMap(new Uint8Array(moduleRef.current.FS.readFile("/sugar.map")));
@@ -292,7 +291,7 @@ function App() {
         <div
             className="flex flex-col min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 items-center justify-center space-y-12 pt-10">
             <UploadBox onSubmit={handleFileChange}/>
-            {progress > 0 ? <progress value={progress} className="styled-progress"/>: <></>}
+            {progress > 0 ? <progress value={progress} className="styled-progress shadow-lg rounded-lg"/>: <></>}
             <div className="flex mx-auto mt-10 shadow-lg rounded-lg ">
                 <MoorhenBox fileContent={fileContent} predictedMapsSaved={predictedMapsSaved}
                             phosphateMap={phosphateMap} sugarMap={sugarMap} baseMap={baseMap}/>

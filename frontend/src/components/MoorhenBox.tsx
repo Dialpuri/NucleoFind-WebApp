@@ -75,8 +75,8 @@ function MoorhenStateWrapper(props: MoorhenProps) {
 
         }
         loadMap(props.phosphateMap, "phosphate")
-        loadMap(props.sugarMap, "sugar")
-        loadMap(props.baseMap, "base")
+        // loadMap(props.sugarMap, "sugar")
+        // loadMap(props.baseMap, "base")
     }, [props.predictedMapsSaved]);
 
     return <MoorhenContainer {...collectedProps} setMoorhenDimensions={moorhenDimensionCallback} viewOnly={false}/>

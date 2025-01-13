@@ -117,7 +117,7 @@ gemmi::Grid<> NucleoFind::reinterpolate_grid(const gemmi::Grid<>& grid) {
         }
     } else {
         gemmi::MaskedGrid<float> masked_grid = masked_asu(output_grid);
-        for (const auto& point: output_grid) {
+        for (const auto& point: masked_grid) {
             gemmi::Position position = output_grid.point_to_position(point) - box.minimum;
             output_grid.set_value(point.u, point.v, point.w, grid.interpolate_value(position));
         }

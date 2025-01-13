@@ -15,7 +15,6 @@
     background-color: #e0e0e0; /* Background of the progress bar */
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .styled-progress::-webkit-progress-bar {
@@ -24,7 +23,7 @@
 }
 
 .styled-progress::-webkit-progress-value {
-    background: linear-gradient(90deg, #76c7c0, #4caf50); /* Gradient for the progress fill */
+    background: linear-gradient(90deg, #47a0d1, rgba(12, 108, 149, 0.84)); /* Gradient for the progress fill */
     border-radius: 12.5px;
     transition: width 0.3s ease; /* Smooth animation */
 }
