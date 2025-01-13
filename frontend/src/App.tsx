@@ -24,6 +24,7 @@ function App() {
     const [sugarMap, setSugarMap] = useState<null | Uint8Array>(null);
     const [baseMap, setBaseMap] = useState<null | Uint8Array>(null);
     const [progress, setProgress] = useState<number>(0);
+    const [modelLoaded, setModelLoaded] = useState<boolean>(false);
 
     const workerRef = useRef<null | Worker>(null);
     const nucleofindRef = useRef<null | NucleoFindType>(null);
@@ -48,37 +49,6 @@ function App() {
         const mtzPath = "/hklout.mtz"
         moduleRef.current.FS.writeFile(mtzPath, fileContent);
         nucleofindRef.current = new moduleRef.current.NucleoFind();
-
-        workerRef.current = new Worker();
-
-        const initialiseWorker = () => {
-            return new Promise((resolve, reject) => {
-                if (workerRef.current === null) {
-                    console.error("Failed to create worker.");
-                    return;
-                }
-
-                workerRef.current.postMessage(
-                    {
-                        action: "init",
-                        data: {modelPath: "/nucleofind-nano-float32.onnx"}
-                    }
-                );
-
-                workerRef.current.onmessage = (event) => {
-                    if (event.data.action == "ready") {
-                        console.log("Worker ready.");
-                        resolve(null);
-                    }
-                }
-
-                workerRef.current.onerror = (error) => {
-                    reject(error);
-                };
-            })
-        }
-
-        await initialiseWorker();
 
         if (nucleofindRef.current === null) {
             console.error("Failed to create NucleoFind object.");
@@ -138,40 +108,52 @@ function App() {
 
     }
 
-    useEffect(() => {
-        main().then(() => {
-            console.log("Main function finished.")
-        })
-    }, [fileContent]);
+    const preloadWorker = async() => {
+        workerRef.current = new Worker();
 
-    // useEffect(() => {
-    //     for (let i = 0; i < sliceStatus.length; i++) {
-    //         if (sliceStatus[i] != WorkerStatus.FINISHED) {
-    //             return
-    //         }
-    //     }
-    //
-    //     if (nucleofindRef.current === null) {
-    //         console.error("Failed to find NucleoFind Instance in slice useEffect.");
-    //         return;
-    //     }
-    //
-    //     if (moduleRef.current === null) {
-    //         console.error("Failed to find NucleoFind Module in slice useEffect.");
-    //         return;
-    //     }
-    //
-    //     console.log(sliceStatus)
-    //
-    //     console.log("All slices have finished")
-    //     nucleofindRef.current.save_maps();
-    //     setPhosphateMap(new Uint8Array(moduleRef.current.FS.readFile("/phosphate.map")));
-    //     setSugarMap(new Uint8Array(moduleRef.current.FS.readFile("/sugar.map")));
-    //     setBaseMap(new Uint8Array(moduleRef.current.FS.readFile("/base.map")));
-    //     // nucleofindRef.current.delete();
-    //     setPredictedMapsSaved(true);
-    //
-    // }, [sliceStatus]);
+        const initialiseWorker = () => {
+            return new Promise((resolve, reject) => {
+                if (workerRef.current === null) {
+                    console.error("Failed to create worker.");
+                    return;
+                }
+
+                workerRef.current.postMessage(
+                    {
+                        action: "init",
+                        data: {modelPath: "/nucleofind-nano-float32.onnx"}
+                    }
+                );
+
+                workerRef.current.onmessage = (event) => {
+                    if (event.data.action == "ready") {
+                        console.log("Worker ready.");
+                        resolve(null);
+                    }
+                }
+
+                workerRef.current.onerror = (error) => {
+                    reject(error);
+                };
+            })
+        }
+
+        await initialiseWorker();
+    }
+
+    useEffect(() => {
+        preloadWorker().then(() => {
+            setModelLoaded(true);
+        } )
+    }, []);
+
+    useEffect(() => {
+        if (fileContent === null) return;
+
+        main().then(() => {})
+
+    }, [modelLoaded, fileContent]);
+
 
 
     const handleFileChange = async (event: any) => {
@@ -193,104 +175,10 @@ function App() {
         }
     };
 
-    // const [model, setModel] = useState<null | ort.InferenceSession>(null);
-
-    // useEffect(() => {
-    //     const loadModel = async () => {
-    //         try {
-    //             const sessionOption = { executionProviders: ['webgl'] };
-    //             const session = await ort.InferenceSession.create(
-    //                 '/nucleofind-nano-float32.onnx',
-    //                 // sessionOption
-    //             );
-    //             setModel(session);
-    //             console.log('ONNX model loaded successfully.');
-    //         } catch (err) {
-    //             console.error('Error loading ONNX model:', err);
-    //         }
-    //     };
-    //
-    //     loadModel();
-    // }, []);
-
-
-    // useEffect(() => {
-    //     if (fileContent === null) {return;}
-    //     if (moduleRef.current === null) {return;}
-    //     if (model === null) {return;}
-    //
-    //     const mtzPath = "/hklout.mtz"
-    //     moduleRef.current.FS.writeFile(mtzPath, fileContent);
-    //     nucleofindRef.current = new moduleRef.current.NucleoFind();
-
-
-        // const run = async () => {
-        //     const filePath = "/hklout.mtz"
-        //     moduleRef.current.FS.writeFile(filePath, fileContent);
-        //
-        //     const nucleofind = new moduleRef.current.NucleoFind()
-        //     const no_slices = nucleofind.get_no_slices();
-        //
-        //
-        //
-        //
-        //
-        //
-        //     //
-        //     // async function predict(i: number) {
-        //     //     const slice = nucleofind.get_slice(i);
-        //     //
-        //     //     const data = new Array(32 * 32 * 32);
-        //     //     for (let i = 0; i < slice.size(); i++) {
-        //     //         data[i] = slice.get(i)
-        //     //     }
-        //     //
-        //     //     // let tensor = new ort.Tensor("float32", data, [32, 32, 32])
-        //     //     // tensor = tensor.reshape([1, 32, 32, 32, 1])
-        //     //     // const input = {x: tensor};
-        //     //     // const output_name = "conv3d_22";
-        //     //     // let output = await model.run(input)
-        //     //     // output = output[output_name]
-        //     //     // output = output.reshape([32, 32, 32, 4])
-        //     //
-        //     //     const size = output.data.length * output.data.BYTES_PER_ELEMENT; // Calculate byte size
-        //     //     const ptr = moduleRef.current._malloc(size); // Allocate memory
-        //     //     const heap_array = new Float32Array(moduleRef.current.HEAPF32.buffer, ptr, output.data.length);
-        //     //     heap_array.set(output.data);
-        //     //     nucleofind.set_slice_data_by_ptr(i, ptr, size)
-        //     //     moduleRef.current._free(ptr);
-        //     //
-        //     //     const progress = Math.round(i / no_slices * 100);
-        //     //     return progress;
-        //     // }
-        //
-        //     // await predict(0);
-        //     for (let i = 0; i < no_slices; i++) {
-        //         const progress = await predict(i);
-        //         setProgress(progress);
-        //         console.log(progress, "%")
-        //         // break;
-        //     }
-        //
-        //     nucleofind.save_maps();
-        //
-        //     setPhosphateMap(new Uint8Array(moduleRef.current.FS.readFile("/phosphate.map")));
-        //     setSugarMap(new Uint8Array(moduleRef.current.FS.readFile("/sugar.map")));
-        //     setBaseMap(new Uint8Array(moduleRef.current.FS.readFile("/base.map")));
-        //     // save_map("/phosphate.map");
-        //     // save_map("/sugar.map");
-        //     // save_map("/base.map");
-        //     nucleofind.delete();
-        //     setPredictedMapsSaved(true);
-        // }
-        // // run();
-        // }, [fileContent]);
-
-
     return (
         <div
             className="flex flex-col min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 items-center justify-center space-y-12 pt-10">
-            <UploadBox onSubmit={handleFileChange}/>
+            <UploadBox onSubmit={handleFileChange} allowSubmission={modelLoaded}/>
             {progress > 0 ? <progress value={progress} className="styled-progress shadow-lg rounded-lg"/>: <></>}
             <div className="flex mx-auto mt-10 shadow-lg rounded-lg ">
                 <MoorhenBox fileContent={fileContent} predictedMapsSaved={predictedMapsSaved}

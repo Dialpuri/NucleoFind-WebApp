@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "prebuild": "curl -L -o public/nucleofind-nano-float32.onnx https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-23.onnx && cp ./node_modules/onnxruntime-web/dist/*.wasm public  ",
+    "prebuild": "curl -L -o public/nucleofind-nano-float32.onnx https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-32-float32.onnx && cp ./node_modules/onnxruntime-web/dist/*.wasm public  ",
     "lint": "eslint .",
     "preview": "vite preview"
   },
