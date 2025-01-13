@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build; wget https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-23.onnx -O public/nucleofind-nano-float32.onnx; cp ./node_modules/onnxruntime-web/dist/*.wasm public ",
     "lint": "eslint .",
     "preview": "vite preview"
   },
