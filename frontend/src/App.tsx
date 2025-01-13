@@ -54,6 +54,10 @@ function App() {
             console.error("Failed to create NucleoFind object.");
             return;
         }
+        if (workerRef.current === null) {
+            console.error("Failed to find workerRef.");
+            return;
+        }
 
         const no_slices = nucleofindRef.current.get_no_slices();
         const sliceStatus = new Array(no_slices).fill(WorkerStatus.NOTSTARTED);
