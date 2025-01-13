@@ -2,12 +2,22 @@
 import nucleofind_module from "../wasm/nucleofind.js";
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
-import UploadBox from "./components/UploadBox.tsx";
+import FileTransfer from "./components/FileUpload.tsx";
 import MoorhenBox from "./components/MoorhenBox.tsx";
 import { WorkerStatus } from "./interface/enum.ts";
 import { NucleoFindType, NucleoFindModuleType } from "./interface/types.ts";
 
 import Worker from "./workers/inferenceWorker?worker";
+
+function saveMap(fileData: Uint8Array, outputName: string) {
+  const blob = new Blob([fileData], { type: "application/octet-stream" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = outputName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
 function App() {
   const [fileContent, setFileContent] = useState<null | Uint8Array>(null);
@@ -29,7 +39,7 @@ function App() {
         finishedCount += 1;
       }
     }
-    setProgress(finishedCount / sliceStatus.length);
+    setProgress((100 * finishedCount) / sliceStatus.length);
     return finishedCount === sliceStatus.length;
   };
 
@@ -194,18 +204,47 @@ function App() {
     }
   };
 
+  const downloadCallback = () => {
+    if (moduleRef.current === null) {
+      console.error("Failed to find NucleoFind Module in worker result.");
+      return;
+    }
+    if (phosphateMap === null) {
+      console.error("Failed to find phosphate map.");
+      return;
+    }
+    if (sugarMap === null) {
+      console.error("Failed to find sugar map.");
+      return;
+    }
+    if (baseMap === null) {
+      console.error("Failed to find base map.");
+      return;
+    }
+
+    saveMap(phosphateMap, "nucleofind-phosphate.map");
+    saveMap(sugarMap, "nucleofind-sugar.map");
+    saveMap(baseMap, "nucleofind-base.map");
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 items-center justify-center space-y-12 pt-10">
-      <UploadBox onSubmit={handleFileChange} allowSubmission={modelLoaded} />
-      {progress > 0 && !predictedMapsSaved ? (
-        <progress
-          value={progress}
-          className="styled-progress shadow-lg rounded-lg"
+    <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-nfTertiary to-nfSecondaryAlt items-center justify-center pt-10">
+      <div
+        className={`transition-all duration-700 ease-in-out text-center  ${
+          predictedMapsSaved ? "translate-y-0 " : "translate-y-full mb-3"
+        }`}
+      >
+        <FileTransfer
+          onSubmit={handleFileChange}
+          allowSubmission={modelLoaded}
+          progress={progress}
+          predictedMapsSaved={predictedMapsSaved}
+          downloadCallback={downloadCallback}
         />
-      ) : (
-        <></>
-      )}
-      <div className="flex mx-auto mt-10 shadow-lg rounded-lg ">
+      </div>
+      <div
+        className={`transition-opacity duration-700 ${!predictedMapsSaved ? "z-0 invisible opacity-0" : "visible opacity-100 mt-3 flex-grow"}`}
+      >
         <MoorhenBox
           fileContent={fileContent}
           predictedMapsSaved={predictedMapsSaved}
@@ -214,7 +253,9 @@ function App() {
           baseMap={baseMap}
         />
       </div>
-      <footer>Copyright © Jordan Dialpuri | University of York 2025</footer>
+      <footer className="pt-2 text-gray-800">
+        Copyright © Jordan Dialpuri | University of York 2025
+      </footer>
     </div>
   );
 }
