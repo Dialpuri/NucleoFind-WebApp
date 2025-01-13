@@ -1,6 +1,6 @@
 function UploadBox(props: { onSubmit: (event: never) => Promise<void> }) {
     return <>
-        <div className="space-y-4 bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+        <div className="space-y-4 bg-white shadow-lg rounded-lg p-8 max-w-xl w-full">
             <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Find nucleic acid features with NucleoFind</h1>
             <form className="space-y-4 flex items-center">
                 <label

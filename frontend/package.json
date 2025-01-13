@@ -19,7 +19,8 @@
     "vite-plugin-cross-origin-isolation": "^0.1.6",
     "vite-plugin-static-copy": "^2.2.0",
     "vite-plugin-top-level-await": "^1.4.4",
-    "vite-plugin-wasm": "^3.4.1"
+    "vite-plugin-wasm": "^3.4.1",
+    "workerpool": "^9.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
