@@ -1,8 +1,6 @@
 import {Provider, useDispatch} from "react-redux";
 import {MoorhenReduxStore, MoorhenContainer, addMap, MoorhenMap} from "moorhen"
 import {useEffect, useRef} from "react";
-import {Simulate} from "react-dom/test-utils";
-import load = Simulate.load;
 
 interface MoorhenProps {
     fileContent: null | Uint8Array,
@@ -47,6 +45,7 @@ function MoorhenStateWrapper(props: MoorhenProps) {
                 useWeight: false,
                 calcStructFact: true,
             };
+            if (props.fileContent === null) return;
             await newMap.loadToCootFromMtzData(
                 props.fileContent,
                 'map-1',
@@ -74,9 +73,13 @@ function MoorhenStateWrapper(props: MoorhenProps) {
 
 
         }
+        if (props.phosphateMap === null) return;
+        if (props.sugarMap === null) return;
+        if (props.baseMap === null) return;
+
         loadMap(props.phosphateMap, "phosphate")
-        // loadMap(props.sugarMap, "sugar")
-        // loadMap(props.baseMap, "base")
+        loadMap(props.sugarMap, "sugar")
+        loadMap(props.baseMap, "base")
     }, [props.predictedMapsSaved]);
 
     return <MoorhenContainer {...collectedProps} setMoorhenDimensions={moorhenDimensionCallback} viewOnly={false}/>

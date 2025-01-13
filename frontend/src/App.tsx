@@ -1,10 +1,11 @@
+// @ts-ignore
 import nucleofind_module from "../wasm/nucleofind.js"
 import './App.css'
 import {useEffect, useRef, useState} from "react";
 import UploadBox from "./components/UploadBox.tsx";
 import MoorhenBox from "./components/MoorhenBox.tsx";
-import {WorkerStatus} from "./interface/enum.d.ts"
-import {NucleoFindType, NucleoFindModuleType} from "./interface/types.d.ts"
+import {WorkerStatus} from "./interface/enum.ts"
+import {NucleoFindType, NucleoFindModuleType} from "./interface/types.ts"
 
 // import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/esm/ort.min.js";
 // ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
@@ -17,7 +18,6 @@ import Worker from "./workers/inferenceWorker?worker"
 
 function App() {
 
-    const [sliceStatus, setSliceStatus] = useState<WorkerStatus[]>([]);
     const [fileContent, setFileContent] = useState<null | Uint8Array>(null);
     const [predictedMapsSaved, setPredictedMapsSaved] = useState<boolean>(false);
     const [phosphateMap, setPhosphateMap] = useState<null | Uint8Array>(null);
