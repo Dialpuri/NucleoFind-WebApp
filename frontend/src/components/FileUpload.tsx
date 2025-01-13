@@ -1,5 +1,5 @@
 function FileSelection(props: {
-  onChange: (event: Event) => Promise<void>;
+  onChange: (event: any) => Promise<void>;
   allowSubmission: boolean;
 }) {
   return (
@@ -11,7 +11,7 @@ function FileSelection(props: {
       <input
         type="file"
         id="fileInput"
-        onChange={props.onChange}
+        onChange={(e) => props.onChange(e)}
         disabled={!props.allowSubmission}
         className="mt-2 file:m-1 mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
              file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-nfAccent
