@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react-swc';
 import crossOriginIsolation from 'vite-plugin-cross-origin-isolation';
 // import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
+import {viteStaticCopy} from "vite-plugin-static-copy";
 // import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // https://vite.dev/config/
@@ -35,6 +36,14 @@ export default defineConfig({
               });
           },
       },
+      viteStaticCopy({
+          targets: [
+              {
+                  src: 'node_modules/onnxruntime-web/dist/*.wasm',
+                  dest: '.'
+              }
+          ]
+      }),
       // crossOriginIsolation(),
   ],
     // server: {

@@ -1,8 +1,8 @@
 // @ts-ignore
 // import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/esm/ort.min.js";
-// ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
 import * as ort from 'onnxruntime-web';
-ort.env.wasm.wasmPaths = "./node_modules/onnxruntime-web/dist/"
+// ort.env.wasm.wasmPaths = "./node_modules/onnxruntime-web/dist/"
+ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
 ort.env.wasm.numThreads = 1;
 
 const loadModel = async (modelPath: string) => {
