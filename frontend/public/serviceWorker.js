@@ -1,5 +1,5 @@
 const CACHE_NAME = 'nucleofind-nano-24-12-31-float32';
-const ONNX_FILE_URL = '/nucleofind-nano-float32.onnx'; // Adjust the path based on your deployment
+const ONNX_FILE_URL = '/nucleofind-nano-float32.onnx';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(

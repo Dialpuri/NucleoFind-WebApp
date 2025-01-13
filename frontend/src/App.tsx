@@ -197,7 +197,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 items-center justify-center space-y-12 pt-10">
       <UploadBox onSubmit={handleFileChange} allowSubmission={modelLoaded} />
-      {progress > 0 ? (
+      {progress > 0 && !predictedMapsSaved ? (
         <progress
           value={progress}
           className="styled-progress shadow-lg rounded-lg"
