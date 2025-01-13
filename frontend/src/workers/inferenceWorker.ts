@@ -4,7 +4,7 @@
 
 import * as ort from "onnxruntime-web";
 ort.env.wasm.wasmPaths = "/";
-ort.env.wasm.numThreads = 8;
+ort.env.wasm.numThreads = 1;
 
 const loadModel = async (modelPath: string) => {
   try {
