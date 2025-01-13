@@ -22,8 +22,8 @@ onmessage = async (event: MessageEvent) => {
   const { action, data } = event.data;
 
   if (action == "init") {
-    // @ts-expect-error
     console.log("Initializing ONNX model...")
+    // @ts-expect-error
     model = await loadModel(data.modelPath);
     postMessage({ action: "ready" });
     return;
