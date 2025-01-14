@@ -44,12 +44,15 @@ const loadModel = async (modelName: string, modelUrl: string) => {
     const extraSessionOptions = {
       logVerbosityLevel: 4,
       logSeverityLevel: 4,
+      extra: {
+        use_ort_model_bytes_directly: 0
+      }
     }
     console.log(modelName)
 
     // @ts-ignore
-    // const session = await ort.InferenceSession.create(new Uint8Array(modelBlob), {...extraSessionOptions});
-    const session = await ort.InferenceSession.create(modelUrl, {...extraSessionOptions});
+    const session = await ort.InferenceSession.create(new Uint8Array(modelBlob), extraSessionOptions);
+    // const session = await ort.InferenceSession.create(modelUrl, {...extraSessionOptions});
 
     console.log("ONNX model loaded successfully.");
     return session;
