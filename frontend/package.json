@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "prebuild": "curl -C - -L -o public/nucleofind-nano-float32.onnx https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-31-float32.onnx && cp ./node_modules/onnxruntime-web/dist/*.wasm public  ",
+    "prebuild": "cp ./node_modules/onnxruntime-web/dist/*.wasm public  ",
     "lint": "eslint .",
     "preview": "vite preview",
     "pretty": "prettier src --write"
