@@ -16,6 +16,7 @@ interface MoorhenProps {
   phosphateMap: null | Uint8Array;
   sugarMap: null | Uint8Array;
   baseMap: null | Uint8Array;
+  setMoorhenReady: (ready: boolean) => void;
 }
 
 function MapButton(props: {
@@ -43,6 +44,14 @@ function MoorhenStateWrapper(props: MoorhenProps) {
   const moleculesRef = useRef(null);
   const mapsRef = useRef(null);
   const dispatch = useDispatch();
+  const cootInitialized = useSelector(
+      (state: any) => state.generalStates.cootInitialized
+  );
+
+  useEffect(() => {
+    if (!cootInitialized) return;
+    props.setMoorhenReady(true)
+  }, [cootInitialized]);
 
   const collectedProps = {
     glRef: glRef,

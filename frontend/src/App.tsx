@@ -27,6 +27,7 @@ function App() {
   const [baseMap, setBaseMap] = useState<null | Uint8Array>(null);
   const [progress, setProgress] = useState<number>(0);
   const [modelLoaded, setModelLoaded] = useState<boolean>(false);
+  const [moorhenReady, setMoorhenReady] = useState<boolean>(false);
 
   const workerRef = useRef<null | Worker>(null);
   const nucleofindRef = useRef<null | NucleoFindType>(null);
@@ -174,12 +175,12 @@ function App() {
     //       });
     //   });
     // }
-
-
+    if (!moorhenReady) return;
+    console.log("Moorhen ready, lets go!")
     preloadWorker().then(() => {
       setModelLoaded(true);
     });
-  }, []);
+  }, [moorhenReady]);
 
   useEffect(() => {
     if (fileContent === null) return;
@@ -256,6 +257,7 @@ function App() {
           phosphateMap={phosphateMap}
           sugarMap={sugarMap}
           baseMap={baseMap}
+          setMoorhenReady={setMoorhenReady}
         />
       </div>
       <footer className="pt-2 text-gray-800">
