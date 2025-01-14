@@ -19,6 +19,36 @@ function saveMap(fileData: Uint8Array, outputName: string) {
   document.body.removeChild(link);
 }
 
+const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
+  try {
+    const root = await navigator.storage.getDirectory();
+    console.log("Getting", modelName, "from OPFS.")
+    return root.getFileHandle(modelName).then(async (fileHandle) => {
+      console.log("Found", modelName, "in OPFS.")
+      const file = await fileHandle.getFile();
+      return await file.arrayBuffer();
+    }).catch(async () => {
+      console.log("Could not find", modelName, "in OPFS. Downloading from remote URL.")
+      const response = await fetch(modelUrl);
+      if (!response.ok) {
+        console.error("Failed to fetch model from remote URL.");
+      }
+      const modelBlob = await response.blob();
+
+      const newFileHandle = await root.getFileHandle(modelName, {create: true});
+      const writable = await newFileHandle.createWritable();
+      await writable.write(modelBlob);
+      await writable.close();
+
+      return modelBlob.arrayBuffer();
+    });
+
+  } catch (error: unknown) {
+    console.error("Error loading model from OPFS.", error);
+  }
+}
+
+
 function App() {
   const [fileContent, setFileContent] = useState<null | Uint8Array>(null);
   const [predictedMapsSaved, setPredictedMapsSaved] = useState<boolean>(false);
@@ -134,13 +164,25 @@ function App() {
           return;
         }
 
-        workerRef.current.postMessage({
-          action: "init",
-          data: {
-            modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
-            modelName: "nucleofind-nano-float32.ort"
-          },
-        });
+        const modelParams = {
+          modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
+          modelName: "nucleofind-nano-float32.ort"
+        }
+
+        loadModelFromOPFS(modelParams.modelName, modelParams.modelPath).then((modelBuffer) => {
+          if (!workerRef.current) {
+            console.error("Failed to find workerRef.");
+            return;
+          }
+
+          workerRef.current.postMessage({
+            action: "init",
+            data: {
+              model: modelBuffer
+            },
+          })
+
+        })
 
         workerRef.current.onmessage = (event) => {
           if (event.data.action == "ready") {
