@@ -6,9 +6,42 @@ import * as ort from "onnxruntime-web";
 ort.env.wasm.wasmPaths = "/";
 ort.env.wasm.numThreads = 16;
 
-const loadModel = async (modelPath: string) => {
+
+const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
   try {
-    const session = await ort.InferenceSession.create(modelPath);
+    const root = await navigator.storage.getDirectory();
+    console.log("Getting", modelName, "from OPFS.")
+    return root.getFileHandle(modelName).then(async (fileHandle) => {
+      const file = await fileHandle.getFile();
+      return await file.arrayBuffer();
+    }).catch(async () => {
+      const response = await fetch(modelUrl);
+      if (!response.ok) {
+        console.error("Failed to fetch model from remote URL.");
+      }
+      const modelBlob = await response.blob();
+
+      const newFileHandle = await root.getFileHandle(modelName, {create: true});
+      const writable = await newFileHandle.createWritable();
+      await writable.write(modelBlob);
+      await writable.close();
+
+      return modelBlob.arrayBuffer();
+    });
+
+  } catch (error: unknown) {
+    console.error("Error loading model from OPFS.", error);
+  }
+}
+
+const loadModel = async (modelName: string, modelUrl: string) => {
+  try {
+    const modelBlob = await loadModelFromOPFS(modelName, modelUrl);
+    if (!modelBlob) {
+      console.error("Failed to load model blob from OPFS and/or remote.")
+      return
+    }
+    const session = await ort.InferenceSession.create(modelBlob);
     console.log("ONNX model loaded successfully.");
     return session;
   } catch (err) {
@@ -24,7 +57,7 @@ onmessage = async (event: MessageEvent) => {
   if (action == "init") {
     console.log("Initializing ONNX model...")
     // @ts-expect-error
-    model = await loadModel(data.modelPath);
+    model = await loadModel(data.modelName, data.modelPath);
     postMessage({ action: "ready" });
     return;
   }

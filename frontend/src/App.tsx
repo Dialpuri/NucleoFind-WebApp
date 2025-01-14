@@ -126,8 +126,6 @@ function App() {
   const preloadWorker = async () => {
     workerRef.current = new Worker();
 
-    await fetch("/nucleofind-nano-float32.onnx")
-
     const initialiseWorker = () => {
       return new Promise((resolve, reject) => {
         if (workerRef.current === null) {
@@ -137,7 +135,10 @@ function App() {
 
         workerRef.current.postMessage({
           action: "init",
-          data: { modelPath: "/nucleofind-nano-float32.onnx" },
+          data: {
+            modelPath: "/nucleofind-nano-float32.onnx",
+            modelName: "nucleofind-nano-float32.onnx"
+          },
         });
 
         workerRef.current.onmessage = (event) => {
@@ -158,21 +159,21 @@ function App() {
   };
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("./serviceWorker.js")
-          .then((registration) => {
-            console.log(
-              "Service Worker registered with scope:",
-              registration.scope,
-            );
-          })
-          .catch((error) => {
-            console.error("Service Worker registration failed:", error);
-          });
-      });
-    }
+    // if ("serviceWorker" in navigator) {
+    //   window.addEventListener("load", () => {
+    //     navigator.serviceWorker
+    //       .register("./serviceWorker.js")
+    //       .then((registration) => {
+    //         console.log(
+    //           "Service Worker registered with scope:",
+    //           registration.scope,
+    //         );
+    //       })
+    //       .catch((error) => {
+    //         console.error("Service Worker registration failed:", error);
+    //       });
+    //   });
+    // }
 
     preloadWorker().then(() => {
       setModelLoaded(true);
