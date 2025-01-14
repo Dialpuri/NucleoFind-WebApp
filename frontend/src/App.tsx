@@ -7,10 +7,6 @@ import MoorhenBox from "./components/MoorhenBox.tsx";
 import { WorkerStatus } from "./interface/enum.ts";
 import { NucleoFindType, NucleoFindModuleType } from "./interface/types.ts";
 
-import * as ort from "onnxruntime-web";
-ort.env.wasm.wasmPaths = "/";
-ort.env.wasm.numThreads = 8;
-
 import Worker from "./workers/inferenceWorker?worker";
 
 function saveMap(fileData: Uint8Array, outputName: string) {
@@ -32,7 +28,6 @@ const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
       const file = await fileHandle.getFile();
       return await file.arrayBuffer();
     }).catch(async () => {
-      console.log("Could not find", modelName, "in OPFS. Downloading from remote URL.")
       const response = await fetch(modelUrl);
       if (!response.ok) {
         console.error("Failed to fetch model from remote URL.");
@@ -50,7 +45,6 @@ const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
   } catch (error: unknown) {
     console.error("Error loading model from OPFS.", error);
   }
-}
 
 
 function App() {
@@ -168,39 +162,13 @@ function App() {
           return;
         }
 
-        const modelParams = {
-          modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
-          modelName: "nucleofind-nano-float32.ort"
-        }
-
-        loadModelFromOPFS(modelParams.modelName, modelParams.modelPath).then((modelBuffer) => {
-          if (!workerRef.current) {
-            console.error("Failed to find workerRef.");
-            return;
-          }
-          if (modelBuffer === null) {
-            console.error("Failed to load model from OPFS.");
-            return
-          }
-          // @ts-ignore
-          const modelData = new Uint8Array(modelBuffer);
-
-          ort.InferenceSession.create(modelData).then(session => {
-            console.log("ONNX model loaded successfully. in main thread!");
-            resolve(session);
-          }).catch(err => {
-            console.error("Error loading ONNX model:", err);
-            reject(err)
-          })
-
-          workerRef.current.postMessage({
-            action: "init",
-            data: {
-              model: modelBuffer
-            },
-          })
-
-        })
+        workerRef.current.postMessage({
+          action: "init",
+          data: {
+            modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
+            modelName: "nucleofind-nano-float32.ort"
+          },
+        });
 
         workerRef.current.onmessage = (event) => {
           if (event.data.action == "ready") {
