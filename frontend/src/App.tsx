@@ -7,6 +7,10 @@ import MoorhenBox from "./components/MoorhenBox.tsx";
 import { WorkerStatus } from "./interface/enum.ts";
 import { NucleoFindType, NucleoFindModuleType } from "./interface/types.ts";
 
+import * as ort from "onnxruntime-web";
+ort.env.wasm.wasmPaths = "/";
+ort.env.wasm.numThreads = 8;
+
 import Worker from "./workers/inferenceWorker?worker";
 
 function saveMap(fileData: Uint8Array, outputName: string) {
@@ -174,6 +178,20 @@ function App() {
             console.error("Failed to find workerRef.");
             return;
           }
+          if (modelBuffer === null) {
+            console.error("Failed to load model from OPFS.");
+            return
+          }
+          // @ts-ignore
+          const modelData = new Uint8Array(modelBuffer);
+
+          ort.InferenceSession.create(modelData).then(session => {
+            console.log("ONNX model loaded successfully. in main thread!");
+            resolve(session);
+          }).catch(err => {
+            console.error("Error loading ONNX model:", err);
+            reject(err)
+          })
 
           workerRef.current.postMessage({
             action: "init",

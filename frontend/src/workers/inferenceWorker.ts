@@ -12,8 +12,9 @@ ort.env.wasm.numThreads = 8;
 const loadModel = async (modelData: Uint8Array) => {
     return new Promise((resolve, reject) => {
         // @ts-ignore
-        ort.InferenceSession.create(modelData).then(session => {
-          console.log("ONNX model loaded successfully.");
+        const modelBuffer = new Uint8Array(modelData);
+        ort.InferenceSession.create(modelBuffer).then(session => {
+          console.log("ONNX model loaded successfully in worker thread!.");
           resolve(session);
         }).catch(err => {
           console.error("Error loading ONNX model:", err);
