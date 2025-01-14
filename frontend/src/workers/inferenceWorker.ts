@@ -12,6 +12,7 @@ const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
     const root = await navigator.storage.getDirectory();
     console.log("Getting", modelName, "from OPFS.")
     return root.getFileHandle(modelName).then(async (fileHandle) => {
+      console.log("Found", modelName, "in OPFS.")
       const file = await fileHandle.getFile();
       return await file.arrayBuffer();
     }).catch(async () => {
@@ -40,7 +41,10 @@ const loadModel = async (modelName: string, modelUrl: string) => {
     if (!modelBlob) {
       console.error("Failed to load model blob from OPFS and/or remote.")
       return
+    } else {
+      console.log("Loaded model blob from OPFS and/or remote.", modelBlob.byteLength, "bytes.")
     }
+    console.log("Creating ONNX model session...")
     const session = await ort.InferenceSession.create(modelBlob);
     console.log("ONNX model loaded successfully.");
     return session;
