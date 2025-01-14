@@ -19,7 +19,6 @@ function saveMap(fileData: Uint8Array, outputName: string) {
   document.body.removeChild(link);
 }
 
-
 function App() {
   const [fileContent, setFileContent] = useState<null | Uint8Array>(null);
   const [predictedMapsSaved, setPredictedMapsSaved] = useState<boolean>(false);
@@ -138,8 +137,9 @@ function App() {
         workerRef.current.postMessage({
           action: "init",
           data: {
-            modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
-            modelName: "nucleofind-nano-float32.ort"
+            modelPath:
+              "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
+            modelName: "nucleofind-nano-float32.ort",
           },
         });
 
@@ -171,7 +171,7 @@ function App() {
     main().then(() => {});
   }, [modelLoaded, fileContent]);
 
-  const handleFileChange = async (event: Event) => {
+  const handleFileChange = async (event: unknown) => {
     // @ts-expect-error - target has no clear type
     const file = event.target.files[0];
     if (!file) {
@@ -217,10 +217,10 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-nfTertiary to-nfSecondaryAlt items-center justify-center pt-10">
+    <div className="flex flex-col h-screen overflow-y-hidden bg-gradient-to-br from-nfTertiary to-nfSecondaryAlt items-center justify-center pt-10">
       <div
         className={`transition-all duration-700 ease-in-out text-center mt-auto ${
-          predictedMapsSaved ? "translate-y-0 " : "translate-y-full mb-3"
+          predictedMapsSaved ? "translate-y-0 " : "sm:translate-y-full mb-3"
         }`}
       >
         <FileTransfer
@@ -232,7 +232,7 @@ function App() {
         />
       </div>
       <div
-        className={`transition-opacity duration-700 ${!predictedMapsSaved ? "z-0 invisible mt-0 opacity-0" : "visible opacity-100 my-auto"}`}
+        className={`transition-opacity hidden sm:flex duration-700 ${!predictedMapsSaved ? "z-0 invisible mt-0 opacity-0" : "visible opacity-100 my-auto"}`}
       >
         <MoorhenBox
           fileContent={fileContent}
@@ -245,10 +245,20 @@ function App() {
       </div>
 
       <footer className="flex mt-auto py-2 font-semibold text-gray-800 items-center align-middle ju">
-        <p className="my-auto">Copyright © Jordan Dialpuri | University of York 2025 |</p>
-        <a className="font-bold hover:text-md  text-decoration-none text-gray-800 hover:text-gray-950 hover:cursor-pointer" target="_blank" href="https://github.com/Dialpuri/NucleoFind">
-        <img src="/github.png" className="w-6 h-6 inline ml-2 hover:scale-105 " alt="GitHub logo"/>
-      </a>
+        <p className="text-xs sm:text-sm my-auto">
+          Copyright © Jordan Dialpuri | University of York 2025 |
+        </p>
+        <a
+          className="font-bold hover:text-md text-decoration-none text-gray-800 hover:text-gray-950 hover:cursor-pointer"
+          target="_blank"
+          href="https://github.com/Dialpuri/NucleoFind"
+        >
+          <img
+            src="/github.png"
+            className="w-4 w-h sm:w-6 sm:h-6 inline ml-2 hover:scale-105 "
+            alt="GitHub logo"
+          />
+        </a>
       </footer>
     </div>
   );

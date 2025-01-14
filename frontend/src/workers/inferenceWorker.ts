@@ -42,7 +42,7 @@ const loadModel = async (modelName: string, modelUrl: string) => {
       return;
     }
     return await ort.InferenceSession.create(modelBlob);
-  } catch (error: any) {
+  } catch (error: Error | unknown) {
     console.error("Failed to load the model from OPFS.", error);
   }
 };

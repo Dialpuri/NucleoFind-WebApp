@@ -46,11 +46,21 @@ export default defineConfig({
       }),
       // crossOriginIsolation(),
   ],
-    // server: {
-    //     headers: {
-    //         "Cross-Origin-Opener-Policy": "same-origin",
-    //         "Cross-Origin-Embedder-Policy": "require-corp",
-    //     },
-    // },
+    server: {
+        cors: {
+            origin: '*',
+            methods: 'GET,POST,PUT,DELETE',
+            allowedHeaders: 'Content-Type,Authorization',
+        },
+        headers: {
+            'Cross-Origin-Resource-Policy': 'same-origin',
+            'Cross-Origin-Embedder-Policy': 'require-corp',
+        },
+    },
+    preview: {
+        cors: {
+            origin: '*', // You can configure this for preview as well
+        },
+    },
     assetsInclude: ["**/*.onnx"],
 })

@@ -26,7 +26,7 @@ function MapButton(props: {
 }) {
   return (
     <button
-      className="bg-nfAccent font-bold min-w-18 text-white align-middle justify-center items-center rounded-lg"
+      className={`${props.status ? "bg-nfAccent" : "bg-nfAccentFaded"} font-bold min-w-18 hover:scale-105 text-white align-middle justify-center items-center rounded-lg`}
       onClick={props.onClick}
     >
       <p className="my-auto p-2">{props.text}</p>
@@ -45,13 +45,13 @@ function MoorhenStateWrapper(props: MoorhenProps) {
   const mapsRef = useRef(null);
   const dispatch = useDispatch();
   const cootInitialized = useSelector(
-      (state: any) => state.generalStates.cootInitialized
+    (state: moorhen.State) => state.generalStates.cootInitialized,
   );
 
   useEffect(() => {
     if (!cootInitialized) return;
-    props.setMoorhenReady(true)
-  }, [cootInitialized]);
+    props.setMoorhenReady(true);
+  }, [cootInitialized, props]);
 
   const collectedProps = {
     glRef: glRef,
@@ -169,7 +169,7 @@ function MoorhenStateWrapper(props: MoorhenProps) {
         <span className="my-auto font-bold">Toggle Maps: </span>
         <MapButton
           text={"2mFo-DFc"}
-          status={baseMapVisible}
+          status={experimentalMapVisible}
           onClick={() => setExperimentalMapVisible((visible) => !visible)}
         />
         <MapButton

@@ -11,6 +11,7 @@ module.exports = {
         'nfSecondaryAlt': 'rgb(71,160,209)',
         'nfTertiary': 'rgba(214,225,233,1)',
         'nfAccent': '#f1b256',
+        'nfAccentFaded': '#ddd4a0',
       },
       animation: {
         rotate: "rotate 10s linear infinite",
