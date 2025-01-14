@@ -219,7 +219,7 @@ function App() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-br from-nfTertiary to-nfSecondaryAlt items-center justify-center pt-10">
       <div
-        className={`transition-all duration-700 ease-in-out text-center  ${
+        className={`transition-all duration-700 ease-in-out text-center mt-auto ${
           predictedMapsSaved ? "translate-y-0 " : "translate-y-full mb-3"
         }`}
       >
@@ -232,7 +232,7 @@ function App() {
         />
       </div>
       <div
-        className={`transition-opacity duration-700 ${!predictedMapsSaved ? "z-0 invisible opacity-0" : "visible opacity-100 mt-3 flex-grow"}`}
+        className={`transition-opacity duration-700 ${!predictedMapsSaved ? "z-0 invisible mt-0 opacity-0" : "visible opacity-100 my-auto"}`}
       >
         <MoorhenBox
           fileContent={fileContent}
@@ -243,8 +243,12 @@ function App() {
           setMoorhenReady={setMoorhenReady}
         />
       </div>
-      <footer className="pt-2 text-gray-800">
-        Copyright © Jordan Dialpuri | University of York 2025
+
+      <footer className="flex mt-auto py-2 font-bold text-gray-800 items-center align-middle ju">
+        <p className="my-auto">Copyright © Jordan Dialpuri | University of York 2025 |</p>
+        <a className="font-bold hover:text-md  text-decoration-none text-gray-800 hover:text-gray-950 hover:cursor-pointer" target="_blank" href="https://github.com/Dialpuri/NucleoFind">
+        <img src="/github.png" className="w-6 h-6 inline ml-2 hover:scale-105 " alt="GitHub logo"/>
+      </a>
       </footer>
     </div>
   );

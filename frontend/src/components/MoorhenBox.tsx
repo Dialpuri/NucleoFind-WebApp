@@ -36,7 +36,7 @@ function MapButton(props: {
 
 function MoorhenStateWrapper(props: MoorhenProps) {
   const moorhenDimensionCallback = (): [number, number] => {
-    return [800, 500];
+    return [700, 400];
   };
   const glRef = useRef(null);
   const timeCapsuleRef = useRef(null);
