@@ -50,7 +50,8 @@ const loadModel = async (modelName: string, modelUrl: string) => {
       //     }
       //   }
         // @ts-ignore
-        ort.InferenceSession.create(modelBlob, extraSessionOptions).then(session => {
+      console.log(modelName, modelUrl)
+        ort.InferenceSession.create(modelUrl).then(session => {
           console.log("ONNX model loaded successfully.");
           resolve(session);
         }).catch(err => {
