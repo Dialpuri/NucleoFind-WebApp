@@ -136,7 +136,7 @@ function App() {
         workerRef.current.postMessage({
           action: "init",
           data: {
-            modelPath: "/nucleofind-nano-float32.ort",
+            modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort",
             modelName: "nucleofind-nano-float32.ort"
           },
         });
