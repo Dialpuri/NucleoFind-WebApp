@@ -36,31 +36,32 @@ const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
 }
 
 const loadModel = async (modelName: string, modelUrl: string) => {
-  try {
-    const modelBlob = await loadModelFromOPFS(modelName, modelUrl);
-    if (!modelBlob) {console.error("Failed to load model blob from OPFS and/or remote."); return;}
-    else {console.log("Loaded model blob from OPFS and/or remote.", modelBlob.byteLength, "bytes.")}
+    return new Promise((resolve, reject) => {
+      loadModelFromOPFS(modelName, modelUrl).then(modelBlob => {
+        if (!modelBlob) {console.error("Failed to load model blob from OPFS and/or remote."); reject("Model blob not found.");}
+        else {console.log("Loaded model blob from OPFS and/or remote.", modelBlob.byteLength, "bytes.")}
+        return modelBlob
+      }).then((modelBlob) => {
+        const extraSessionOptions = {
+          logVerbosityLevel: 4,
+          logSeverityLevel: 4,
+          extra: {
+            use_ort_model_bytes_directly: 0
+          }
+        }
+        // @ts-ignore
+        ort.InferenceSession.create(modelBlob, extraSessionOptions).then(session => {
+          console.log("ONNX model loaded successfully.");
+          resolve(session);
+        }).catch(err => {
+          console.error("Error loading ONNX model:", err);
+          reject(err)
+        })
+      });
 
-    const extraSessionOptions = {
-      logVerbosityLevel: 4,
-      logSeverityLevel: 4,
-      extra: {
-        use_ort_model_bytes_directly: 0
-      }
-    }
-    console.log(modelName)
-
-    // @ts-ignore
-    ort.InferenceSession.create(modelBlob, extraSessionOptions).then(session => {
-      console.log("ONNX model loaded successfully.");
-      return session;
-    }).catch(err => {
-      console.error("Error loading ONNX model:", err);
     })
-  } catch (err) {
-    console.error("Error loading ONNX model:", err);
-  }
-};
+}
+
 
 let model: ort.InferenceSession | null = null;
 
