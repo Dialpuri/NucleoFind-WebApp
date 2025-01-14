@@ -41,7 +41,7 @@ function DownloadMaps(props: { onClick: () => void }) {
           <a
               href="https://doi.org/10.1093/nar/gkae715"
               target="_blank"
-              className="text-sm font-bold hover:scale-105 text-nfSecondary hover:text-nfSecondaryAlt text-decoration-none"
+              className="text-sm font-bold hover:scale-105 hover:cursor-pointer text-nfSecondary hover:text-nfSecondaryAlt text-decoration-none"
           >
               Dialpuri, J. S, et al., Nucleic Acids Research, <br/> Volume 52, Issue
               17, 23 September 2024, Page e84
