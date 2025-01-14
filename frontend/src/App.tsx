@@ -161,31 +161,13 @@ function App() {
   };
 
   useEffect(() => {
-    // if ("serviceWorker" in navigator) {
-    //   window.addEventListener("load", () => {
-    //     navigator.serviceWorker
-    //       .register("./serviceWorker.js")
-    //       .then((registration) => {
-    //         console.log(
-    //           "Service Worker registered with scope:",
-    //           registration.scope,
-    //         );
-    //       })
-    //       .catch((error) => {
-    //         console.error("Service Worker registration failed:", error);
-    //       });
-    //   });
-    // }
-    if (!moorhenReady) return;
-    console.log("Moorhen ready, lets go!")
     preloadWorker().then(() => {
       setModelLoaded(true);
     });
-  }, [moorhenReady]);
+  }, []);
 
   useEffect(() => {
     if (fileContent === null) return;
-
     main().then(() => {});
   }, [modelLoaded, fileContent]);
 
@@ -243,7 +225,7 @@ function App() {
       >
         <FileTransfer
           onSubmit={handleFileChange}
-          allowSubmission={modelLoaded}
+          allowSubmission={modelLoaded && moorhenReady}
           progress={progress}
           predictedMapsSaved={predictedMapsSaved}
           downloadCallback={downloadCallback}

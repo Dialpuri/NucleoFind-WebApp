@@ -23,34 +23,38 @@ function FileSelection(props: {
 
 function DownloadMaps(props: { onClick: () => void }) {
   return (
-      <div className="flex flex-col space-y-2 items-center">
-          <div className="flex space-x-2 i">
-              <p className="font-md mr-2 my-auto">
-                  Your NucleoFind predictions are ready:
-              </p>
-              <button
-                  className="bg-nfAccent w-24 h-10 rounded-lg text-white hover:scale-105"
-                  onClick={props.onClick}
-              >
-                  Download
-              </button>
-          </div>
-          <span className="text-sm">
-              If you have found NucleoFind helpful, please cite:
-          </span>
-          <a href="https://doi.org/10.1093/nar/gkae715" target="_blank" className="text-sm font-bold hover:scale-105 text-nfSecondary hover:text-nfSecondaryAlt text-decoration-none">
-              Dialpuri, J. S, et al., Nucleic Acids Research, <br/> Volume 52, Issue 17,
-              23 September 2024, Page e84
-          </a>
+    <div className="flex flex-col space-y-2 items-center">
+      <div className="flex space-x-2 i">
+        <p className="font-md mr-2 my-auto">
+          Your NucleoFind predictions are ready:
+        </p>
+        <button
+          className="bg-nfAccent w-24 h-10 rounded-lg text-white hover:scale-105"
+          onClick={props.onClick}
+        >
+          Download
+        </button>
       </div>
+      <span className="text-sm">
+        If you have found NucleoFind helpful, please cite:
+      </span>
+      <a
+        href="https://doi.org/10.1093/nar/gkae715"
+        target="_blank"
+        className="text-sm font-bold hover:scale-105 text-nfSecondary hover:text-nfSecondaryAlt text-decoration-none"
+      >
+        Dialpuri, J. S, et al., Nucleic Acids Research, <br /> Volume 52, Issue
+        17, 23 September 2024, Page e84
+      </a>
+    </div>
   );
 }
 
 export default function FileUpload(props: {
-    onSubmit: (event: Event) => Promise<void>;
-    allowSubmission: boolean;
-    progress: number;
-    predictedMapsSaved: boolean;
+  onSubmit: (event: Event) => Promise<void>;
+  allowSubmission: boolean;
+  progress: number;
+  predictedMapsSaved: boolean;
   downloadCallback: () => void;
 }) {
   return (
@@ -62,7 +66,6 @@ export default function FileUpload(props: {
       )}
 
       <div className="space-y-3 bg-white rounded-lg p-8 m-1 relative">
-
         <h1 className="text-3xl font-extrabold text-nfSecondary">
           NucleoFind Web App
         </h1>
@@ -82,7 +85,7 @@ export default function FileUpload(props: {
           )
         ) : (
           <div className="h-8 text-xl font-medium mx-auto text-gray-800 ">
-            Loading models...
+            Loading model...
             <h3 className="text-sm font-medium text-gray-500 mb-6">
               Subsequent loads will be faster
             </h3>
