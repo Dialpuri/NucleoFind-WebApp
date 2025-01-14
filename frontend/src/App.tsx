@@ -136,12 +136,6 @@ function App() {
         workerRef.current.postMessage({
           action: "init",
           data: {
-            // modelPath: "/nucleofind-nano-float32.onnx",
-            // curl -C - -L -o public/nucleofind-nano-float32.onnx https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-31-float32.onnx &&
-            // modelPath: "https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-24-12-31-float32.onnx",
-            // https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort?download=true
-            // curl -C - -L -o public/nucleofind-nano-float32.ort https://huggingface.co/dialpuri/NucleoFind-nano/resolve/main/nucleofind-nano-float32.ort &&
-
             modelPath: "/nucleofind-nano-float32.ort",
             modelName: "nucleofind-nano-float32.ort"
           },
@@ -180,6 +174,7 @@ function App() {
     //       });
     //   });
     // }
+
 
     preloadWorker().then(() => {
       setModelLoaded(true);

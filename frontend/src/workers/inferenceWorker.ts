@@ -51,11 +51,12 @@ const loadModel = async (modelName: string, modelUrl: string) => {
     console.log(modelName)
 
     // @ts-ignore
-    const session = await ort.InferenceSession.create(new Uint8Array(modelBlob), extraSessionOptions);
-    // const session = await ort.InferenceSession.create(modelUrl, {...extraSessionOptions});
-
-    console.log("ONNX model loaded successfully.");
-    return session;
+    ort.InferenceSession.create(modelBlob, extraSessionOptions).then(session => {
+      console.log("ONNX model loaded successfully.");
+      return session;
+    }).catch(err => {
+      console.error("Error loading ONNX model:", err);
+    })
   } catch (err) {
     console.error("Error loading ONNX model:", err);
   }
