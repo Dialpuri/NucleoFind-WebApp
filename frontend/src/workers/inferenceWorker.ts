@@ -37,15 +37,15 @@ const loadModelFromOPFS = async (modelName: string, modelUrl: string) => {
 
 const loadModel = async (modelName: string, modelUrl: string) => {
   try {
-    const modelBlob = await loadModelFromOPFS(modelName, modelUrl);
-    if (!modelBlob) {
-      console.error("Failed to load model blob from OPFS and/or remote.")
-      return
-    } else {
-      console.log("Loaded model blob from OPFS and/or remote.", modelBlob.byteLength, "bytes.")
-    }
-    console.log("Creating ONNX model session...")
-    const session = await ort.InferenceSession.create(modelBlob);
+    // const modelBlob = await loadModelFromOPFS(modelName, modelUrl);
+    // if (!modelBlob) {
+    //   console.error("Failed to load model blob from OPFS and/or remote.")
+    //   return
+    // } else {
+    //   console.log("Loaded model blob from OPFS and/or remote.", modelBlob.byteLength, "bytes.")
+    // }
+    // console.log("Creating ONNX model session...")
+    const session = await ort.InferenceSession.create(modelUrl);
     console.log("ONNX model loaded successfully.");
     return session;
   } catch (err) {
