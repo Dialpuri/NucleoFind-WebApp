@@ -244,7 +244,7 @@ function App() {
         />
       </div>
 
-      <footer className="flex mt-auto py-2 font-bold text-gray-800 items-center align-middle ju">
+      <footer className="flex mt-auto py-2 font-semibold text-gray-800 items-center align-middle ju">
         <p className="my-auto">Copyright © Jordan Dialpuri | University of York 2025 |</p>
         <a className="font-bold hover:text-md  text-decoration-none text-gray-800 hover:text-gray-950 hover:cursor-pointer" target="_blank" href="https://github.com/Dialpuri/NucleoFind">
         <img src="/github.png" className="w-6 h-6 inline ml-2 hover:scale-105 " alt="GitHub logo"/>

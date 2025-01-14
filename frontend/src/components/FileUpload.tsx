@@ -90,9 +90,9 @@ export default function FileUpload(props: {
               <DownloadMaps onClick={props.downloadCallback}/>
           )
         ) : (
-            <div className="h-8 text-xl font-medium mx-auto text-gray-800 mb-6 pb-6 ">
+            <div className="text-xl font-medium mx-auto text-gray-800 mt-4">
                 Loading model...
-                <h3 className="text-sm font-medium text-gray-500 ">
+                <h3 className="text-sm text-gray-500 ">
                   Subsequent loads will be faster
                 </h3>
           </div>
