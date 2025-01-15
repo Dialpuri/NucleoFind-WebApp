@@ -1,24 +1,39 @@
+import { useState } from "react";
+
 function FileSelection(props: {
   onChange: (event: unknown) => Promise<void>;
   allowSubmission: boolean;
   progress: number;
 }) {
+  const [selectedFile, setSelectedFile] = useState<boolean>(false);
+  const onChangeWrapper = (event: unknown) => {
+    setSelectedFile(true);
+    props.onChange(event);
+  };
   return (
-    <form className="space-y-4 flex items-center transition-all duration-100">
-      <label
-        htmlFor="fileInput"
-        className="block text-sm font-medium text-gray-700"
-      ></label>
-      {props.progress == 0 ? (
-        <input
-          type="file"
-          id="fileInput"
-          onChange={(e) => props.onChange(e)}
-          disabled={props.progress != 0}
-          className="mt-2 file:m-1 mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-                     file:rounded-lg file:border-0 file:text-sm file:font-semibold
-                     file:bg-nfAccent hover:file:text-gray-100 hover:file:scale-105 file:text-white"
-        />
+    <form className=" flex items-center transition-all duration-100">
+      {!selectedFile ? (
+        <div className="flex flex-col text-left items-center justify-center">
+          <label
+            htmlFor="fileInput"
+            className="block m-1 mx-auto text-sm text-gray-500 py-2 px-4
+                         rounded-lg border-0 text-sm file:font-semibold
+                         bg-nfAccent hover:text-gray-100 hover:scale-105 text-white"
+          >
+            Choose file
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            onChange={(e) => onChangeWrapper(e)}
+            disabled={props.progress != 0}
+            accept=".mtz"
+            hidden
+          />
+          <label className="text-sm text-slate-500">Select an MTZ file</label>
+        </div>
+      ) : props.progress == 0 ? (
+        <>Processing file...</>
       ) : (
         <>Predicting nucleic acid features...</>
       )}

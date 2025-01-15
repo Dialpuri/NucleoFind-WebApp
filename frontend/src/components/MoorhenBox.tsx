@@ -5,6 +5,7 @@ import {
   addMap,
   hideMap,
   showMap,
+  setMapColours,
   MoorhenMap,
 } from "moorhen";
 import { useEffect, useRef, useState } from "react";
@@ -22,12 +23,21 @@ interface MoorhenProps {
 function MapButton(props: {
   onClick: () => void;
   text: string;
+  colour?: { r: number; g: number; b: number };
   status: boolean;
 }) {
   return (
     <button
-      className={`${props.status ? "bg-nfAccent" : "bg-nfAccentFaded"} font-bold min-w-18 hover:scale-105 text-white align-middle justify-center items-center rounded-lg`}
+      className={`font-bold min-w-18 hover:scale-105 text-white align-middle justify-center items-center rounded-lg`}
       onClick={props.onClick}
+      style={{
+        backgroundColor:
+          props.colour !== undefined
+            ? `rgb(${props.colour.r}, ${props.colour.g}, ${props.colour.b}, ${
+                props.status ? 1 : 0.5
+              })`
+            : "#f1b256",
+      }}
     >
       <p className="my-auto p-2">{props.text}</p>
     </button>
@@ -47,6 +57,11 @@ function MoorhenStateWrapper(props: MoorhenProps) {
   const cootInitialized = useSelector(
     (state: moorhen.State) => state.generalStates.cootInitialized,
   );
+  const maps: moorhen.Map[] = useSelector((state: moorhen.State) => state.maps);
+  const phosphateColor = { r: 255, g: 76, b: 48 };
+  const sugarColor = { r: 241, g: 178, b: 86 };
+  const baseColor = { r: 178, g: 222, b: 39 };
+  const experimentalColor = { r: 76, g: 76, b: 179 };
 
   useEffect(() => {
     if (!cootInitialized) return;
@@ -86,21 +101,51 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     loadMap();
   }, [dispatch, props.fileContent]);
 
+  const handleColorChange = async (
+    molNo: number,
+    color: { r: number; g: number; b: number },
+  ) => {
+    try {
+      dispatch(setMapColours({ molNo: molNo, rgb: color }));
+      const map = maps.find((map) => map.molNo === molNo);
+      if (map === undefined) return;
+      await map.fetchColourAndRedraw();
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
   useEffect(() => {
     if (!props.predictedMapsSaved) return;
     const loadMap = async (map: Uint8Array, name: string) => {
       if (map === null) return;
       const newMap = new MoorhenMap(commandCentre, glRef);
       await newMap.loadToCootFromMapData(map, name, false);
-      dispatch(addMap(newMap));
+      return newMap
     };
-    if (props.phosphateMap === null) return;
-    if (props.sugarMap === null) return;
-    if (props.baseMap === null) return;
 
-    loadMap(props.phosphateMap, "phosphate");
-    loadMap(props.sugarMap, "sugar");
-    loadMap(props.baseMap, "base");
+
+    const loadMapAndColor = async () => {
+      if (props.phosphateMap === null) return;
+      if (props.sugarMap === null) return;
+      if (props.baseMap === null) return;
+
+      const phosphateMap = await loadMap(props.phosphateMap, "phosphate");
+      const sugarMap = await loadMap(props.sugarMap, "sugar");
+      const baseMap = await loadMap(props.baseMap, "base");
+
+      if (phosphateMap === undefined || sugarMap === undefined || baseMap === undefined) return;
+
+      await dispatch(addMap(phosphateMap));
+      await dispatch(addMap(sugarMap));
+      await dispatch(addMap(baseMap));
+
+      await handleColorChange(phosphateMap.molNo, phosphateColor);
+      await handleColorChange(sugarMap.molNo, sugarColor);
+      await handleColorChange(baseMap.molNo, baseColor);
+    }
+
+    loadMapAndColor()
   }, [
     dispatch,
     props.baseMap,
@@ -108,7 +153,6 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     props.predictedMapsSaved,
     props.sugarMap,
   ]);
-  const maps: moorhen.Map[] = useSelector((state: moorhen.State) => state.maps);
 
   const [experimentalMapVisible, setExperimentalMapVisible] = useState(true);
   const [phosphateMapVisible, setPhosphateMapVisible] = useState(true);
@@ -169,21 +213,25 @@ function MoorhenStateWrapper(props: MoorhenProps) {
         <span className="my-auto font-bold">Toggle Maps: </span>
         <MapButton
           text={"2mFo-DFc"}
+          colour={experimentalColor}
           status={experimentalMapVisible}
           onClick={() => setExperimentalMapVisible((visible) => !visible)}
         />
         <MapButton
           text={"Phosphate"}
+          colour={phosphateColor}
           status={phosphateMapVisible}
           onClick={() => setPhosphateMapVisible((visible) => !visible)}
         />
         <MapButton
           text={"Sugar"}
+          colour={sugarColor}
           status={sugarMapVisible}
           onClick={() => setSugarMapVisible((visible) => !visible)}
         />
         <MapButton
           text={"Base"}
+          colour={baseColor}
           status={baseMapVisible}
           onClick={() => setBaseMapVisible((visible) => !visible)}
         />
