@@ -16,8 +16,8 @@ function FileSelection(props: {
         <div className="flex flex-col text-left items-center justify-center">
           <label
             htmlFor="fileInput"
-            className="block m-1 mx-auto text-sm text-gray-500 py-2 px-4
-                         rounded-lg border-0 text-sm file:font-semibold
+            className="block m-1 mx-auto text-sm py-2 px-4
+                         rounded-lg border-0 file:font-semibold
                          bg-nfAccent hover:text-gray-100 hover:scale-105 text-white"
           >
             Choose file
