@@ -29,3 +29,12 @@ export interface EmscriptenVector {
 export interface EmscriptenHeap32 {
   buffer: ArrayBuffer;
 }
+
+export interface MoorhenProps {
+    fileContent: null | Uint8Array;
+    predictedMapsSaved: boolean;
+    phosphateMap: null | Uint8Array;
+    sugarMap: null | Uint8Array;
+    baseMap: null | Uint8Array;
+    setMoorhenReady: (ready: boolean) => void;
+}
