@@ -1,4 +1,4 @@
-import {Provider, useDispatch, useSelector} from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import {
   addMap,
   hideMap,
@@ -9,17 +9,16 @@ import {
   setMapRadius,
   showMap,
 } from "moorhen";
-import {useEffect, useRef, useState} from "react";
-import {moorhen} from "moorhen/types/moorhen";
-import {MapButton} from "./MapButton.tsx";
-import {MoorhenProps} from "../interface/types.ts";
-
-
+import { useEffect, useRef, useState } from "react";
+import { moorhen } from "moorhen/types/moorhen";
+import { MapButton } from "./MapButton.tsx";
+import { MoorhenProps } from "../interface/types.ts";
 
 function MoorhenStateWrapper(props: MoorhenProps) {
-
-  const [dimensions, setDimensions] = useState<Record<string, number>>({ width: 700, height: 400 }
-  );
+  const [dimensions, setDimensions] = useState<Record<string, number>>({
+    width: 700,
+    height: 400,
+  });
 
   const dimensionRef = useRef();
 
@@ -34,9 +33,9 @@ function MoorhenStateWrapper(props: MoorhenProps) {
         setDimensions({ width: 700, height: 400 });
       }
     }
-    handleResize()
+    handleResize();
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
   }, []);
 
   const moorhenDimensionCallback = (): [number, number] => {
@@ -61,7 +60,9 @@ function MoorhenStateWrapper(props: MoorhenProps) {
   const baseColor = { r: 34, g: 147, b: 101 };
   const experimentalColor = { r: 76, g: 76, b: 179 };
 
-  const [experimentalMolNo, setExperimentalMolNo] = useState<number | null>(null);
+  const [experimentalMolNo, setExperimentalMolNo] = useState<number | null>(
+    null,
+  );
   const [phosphateMolNo, setPhosphateMolNo] = useState<number | null>(null);
   const [sugarMolNo, setSugarMolNo] = useState<number | null>(null);
   const [baseMolNo, setBaseMolNo] = useState<number | null>(null);
@@ -88,8 +89,8 @@ function MoorhenStateWrapper(props: MoorhenProps) {
   };
 
   const changeMapColour = async (
-      molNo: number,
-      color: { r: number; g: number; b: number },
+    molNo: number,
+    color: { r: number; g: number; b: number },
   ) => {
     try {
       dispatch(setMapColours({ molNo: molNo, rgb: color }));
@@ -116,9 +117,9 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     };
     if (props.fileContent === null) return;
     await newMap.loadToCootFromMtzData(
-        props.fileContent,
-        "experimental",
-        mapMetadata,
+      props.fileContent,
+      "experimental",
+      mapMetadata,
     );
     setExperimentalMolNo(newMap.molNo);
     dispatch(addMap(newMap));
@@ -128,7 +129,7 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     if (map === null) return;
     const newMap = new MoorhenMap(commandCentre, glRef);
     await newMap.loadToCootFromMapData(map, name, false);
-    return newMap
+    return newMap;
   };
 
   const loadMapAndColor = async () => {
@@ -140,7 +141,12 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     const sugarMap = await loadMap(props.sugarMap, "sugar");
     const baseMap = await loadMap(props.baseMap, "base");
 
-    if (phosphateMap === undefined || sugarMap === undefined || baseMap === undefined) return;
+    if (
+      phosphateMap === undefined ||
+      sugarMap === undefined ||
+      baseMap === undefined
+    )
+      return;
 
     setPhosphateMolNo(phosphateMap.molNo);
     setSugarMolNo(sugarMap.molNo);
@@ -153,16 +159,15 @@ function MoorhenStateWrapper(props: MoorhenProps) {
     await changeMapColour(phosphateMap.molNo, phosphateColor);
     await changeMapColour(sugarMap.molNo, sugarColor);
     await changeMapColour(baseMap.molNo, baseColor);
-  }
+  };
 
   useEffect(() => {
     loadMtz();
   }, [dispatch, props.fileContent]);
 
-
   useEffect(() => {
     if (!props.predictedMapsSaved) return;
-    loadMapAndColor()
+    loadMapAndColor();
   }, [
     dispatch,
     props.baseMap,
@@ -214,20 +219,26 @@ function MoorhenStateWrapper(props: MoorhenProps) {
 
   // Control radius slider
   const changeMapRadius = async () => {
-    if (experimentalMolNo == null || phosphateMolNo === null || sugarMolNo === null || baseMolNo === null) return;
+    if (
+      experimentalMolNo == null ||
+      phosphateMolNo === null ||
+      sugarMolNo === null ||
+      baseMolNo === null
+    )
+      return;
     await dispatch(setMapRadius({ molNo: experimentalMolNo, radius: radius }));
     await dispatch(setMapRadius({ molNo: phosphateMolNo, radius: radius }));
     await dispatch(setMapRadius({ molNo: sugarMolNo, radius: radius }));
     await dispatch(setMapRadius({ molNo: baseMolNo, radius: radius }));
-  }
+  };
 
   const handleRadiusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value);
     setRadius(value);
-  }
+  };
 
   useEffect(() => {
-    changeMapRadius()
+    changeMapRadius();
   }, [radius]);
 
   return (
@@ -243,39 +254,50 @@ function MoorhenStateWrapper(props: MoorhenProps) {
       <div className="flex flex-row space-x-4 items-center justify-center">
         <span className="my-auto font-bold">Toggle Maps: </span>
         <MapButton
-            text={"2mFo-DFc"}
-            colour={experimentalColor}
-            status={experimentalMapVisible}
-            onClick={() => setExperimentalMapVisible((visible) => !visible)}
+          text={"2mFo-DFc"}
+          colour={experimentalColor}
+          status={experimentalMapVisible}
+          onClick={() => setExperimentalMapVisible((visible) => !visible)}
         />
         <MapButton
-            text={"Phosphate"}
-            colour={phosphateColor}
-            status={phosphateMapVisible}
-            onClick={() => setPhosphateMapVisible((visible) => !visible)}
+          text={"Phosphate"}
+          colour={phosphateColor}
+          status={phosphateMapVisible}
+          onClick={() => setPhosphateMapVisible((visible) => !visible)}
         />
         <MapButton
-            text={"Sugar"}
-            colour={sugarColor}
-            status={sugarMapVisible}
-            onClick={() => setSugarMapVisible((visible) => !visible)}
+          text={"Sugar"}
+          colour={sugarColor}
+          status={sugarMapVisible}
+          onClick={() => setSugarMapVisible((visible) => !visible)}
         />
         <MapButton
-            text={"Base"}
-            colour={baseColor}
-            status={baseMapVisible}
-            onClick={() => setBaseMapVisible((visible) => !visible)}
+          text={"Base"}
+          colour={baseColor}
+          status={baseMapVisible}
+          onClick={() => setBaseMapVisible((visible) => !visible)}
         />
 
         <div className="flex flex-col items-center pl-6 2 mb-2">
-          <label htmlFor="default-range" className="block mb-2 text-sm font-semibold ">Map Radius</label>
-          <input id="default-range" type="range" min={0} max={maxRadius} defaultValue={13} onChange={handleRadiusChange}
-                 className="w-32 h-2 bg-white rounded-lg appearance-none accent-nfAccent cursor-pointer "/>
+          <label
+            htmlFor="default-range"
+            className="block mb-2 text-sm font-semibold "
+          >
+            Map Radius
+          </label>
+          <input
+            id="default-range"
+            type="range"
+            min={0}
+            max={maxRadius}
+            defaultValue={13}
+            onChange={handleRadiusChange}
+            className="w-32 h-2 bg-white rounded-lg appearance-none accent-nfAccent cursor-pointer "
+          />
           <div className="flex flex-row justify-between items-center w-full mt-2 text-xs text-center">
             <span className="text-sm">0</span>
             <span className="text-sm">{maxRadius}</span>
           </div>
-
         </div>
       </div>
     </div>
@@ -284,11 +306,11 @@ function MoorhenStateWrapper(props: MoorhenProps) {
 
 function MoorhenBox(props: MoorhenProps) {
   return (
-      <div className="">
-        <Provider store={MoorhenReduxStore}>
-          <MoorhenStateWrapper {...props} />
-        </Provider>
-      </div>
+    <div className="">
+      <Provider store={MoorhenReduxStore}>
+        <MoorhenStateWrapper {...props} />
+      </Provider>
+    </div>
   );
 }
 
